@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
 Vue.use(Vuex);
 
 // initial state object
@@ -42,7 +41,8 @@ const mutations = {
   },
 
   DELETE_NOTE (state) {
-    state.notes.$remove(state.activeNote)
+    let index = state.notes.indexOf(state.activeNote);
+    Vue.delete(state.notes, index);
     state.activeNote = state.notes[0]
   },
 
@@ -53,12 +53,38 @@ const mutations = {
   SET_ACTIVE_NOTE (state, note) {
     state.activeNote = note
   }
+}
 
+const actions = {
+  addNote ({commit}) {
+    commit('ADD_NOTE');
+  },
+
+  editNote ({commit}, e) {
+    commit('EDIT_NOTE', e.target.value);
+  },
+
+  deleteNote ({commit}) {
+    commit('DELETE_NOTE');
+  },
+
+  toggleFavorite ({ commit }) {
+    commit('TOGGLE_FAVORITE')
+  },
+
+  updateActiveNote ({commit}, noteToSet) {
+    commit('SET_ACTIVE_NOTE', noteToSet);
+  }
 }
 
 // Create Vuex instance by combining the state and mutations objects
 // then export the Vuex store for use by our components
 export default new Vuex.Store({
   state,
-  mutations
+  mutations,
+  getters: {
+    activeNote: () => { return state.activeNote },
+    notes: ()=> { return state.notes }
+  },
+  actions
 });
